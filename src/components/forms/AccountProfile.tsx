@@ -1,5 +1,6 @@
 "use client";
-import { ChangeEvent } from "react";
+
+import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 import { UserValidation, UserType } from "@/lib/validations/user";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface Props {
   user: {
@@ -32,6 +34,9 @@ interface Props {
 }
 
 export default function AccountProfile({ user, btnTitle }: Props) {
+  const [files, setFiles] = useState<FileList | null>(null);
+  const { startUpload } = useUploadThing("media");
+
   const form = useForm<UserType>({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -42,15 +47,44 @@ export default function AccountProfile({ user, btnTitle }: Props) {
     },
   });
 
-  const onSubmit = (data: UserType) => {
-    console.log(data);
+  const onSubmit = async (values: UserType) => {
+    const blob = values.profile_photo || "";
+    const hasImageChanged = isBase64Image(blob);
+
+    if (hasImageChanged && files?.length) {
+      const imgRes = await startUpload(Array.from(files || []));
+
+      if (imgRes && imgRes[0].url) {
+        values.profile_photo = imgRes[0].url;
+      }
+    }
+
+    // TODO: update user profile
   };
 
   const handleImage = (
-    e: ChangeEvent,
+    e: ChangeEvent<HTMLInputElement>,
     fieldChange: (value: string) => void
   ) => {
     e.preventDefault();
+
+    const fileReader = new FileReader();
+
+    if (e.target.files?.length) {
+      const file = e.target.files[0];
+
+      setFiles(e.target.files);
+
+      if (!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+
+        fieldChange(imageDataUrl);
+      };
+
+      fileReader.readAsDataURL(file);
+    }
   };
 
   return (
