@@ -157,7 +157,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
           name="name"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-3 w-full">
-              <FormLabel className="text-base-semibold text-light-22">
+              <FormLabel className="text-base-semibold text-light-2">
                 Name
               </FormLabel>
               <FormControl className="flex-1 text-base-semibold text-gray-200">
@@ -176,7 +176,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
           name="username"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-3 w-full">
-              <FormLabel className="text-base-semibold text-light-22">
+              <FormLabel className="text-base-semibold text-light-2">
                 Username
               </FormLabel>
               <FormControl className="flex-1 text-base-semibold text-gray-200">
@@ -196,7 +196,7 @@ export default function AccountProfile({ user, btnTitle }: Props) {
           name="bio"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-3 w-full">
-              <FormLabel className="text-base-semibold text-light-22">
+              <FormLabel className="text-base-semibold text-light-2">
                 Bio
               </FormLabel>
               <FormControl className="flex-1 text-base-semibold text-gray-200">
